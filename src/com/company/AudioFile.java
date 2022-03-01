@@ -42,10 +42,7 @@ public class AudioFile {
                 inputStream.skip(start * bytesPerSecond);
                 long framesOfAudioToCopy = duration * (int) format.getFrameRate();
                 inputStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy);
-                inputStream.mark(inputStream.available());
-                File destinationFile = new File(filename + "_crop.wav");
-                AudioSystem.write(inputStream, fileFormat.getType(), destinationFile);
-                inputStream.reset();
+                length = duration;
             } catch (Exception e) {
                 System.out.println(e);
             }

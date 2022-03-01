@@ -29,8 +29,7 @@ public class AudioFileTest {
     @Test
     public void cropAudio() throws Exception {
         test1.crop(10,15);
-        AudioFile naf = new AudioFile("test1_crop.wav");
-        Assert.assertEquals(naf.getLength(),5);
+        Assert.assertEquals(test1.getLength(),5);
     }
 
     @Test(expected = Exception.class)
