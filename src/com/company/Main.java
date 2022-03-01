@@ -30,6 +30,9 @@ public class Main {
             }catch (FileNotFoundException e){
                 System.out.println(e.getMessage());
                 names = in.nextLine().split(" ");
+            }catch (UnsupportedAudioFileException e){
+                System.out.println(e.getMessage());
+                names = in.nextLine().split(" ");
             }
         }
         for (AudioFile af: list){
