@@ -12,6 +12,7 @@ public class AudioFile {
     private int length;
     private File audio;
     private String filename;
+    private AudioInputStream inputStream;
 
     AudioFile(String name) throws IOException, UnsupportedAudioFileException {
         audio = new File(name);
@@ -20,7 +21,9 @@ public class AudioFile {
         long frames = audioInputStream.getFrameLength();
         length = (int) ((frames + 0.0) / format.getFrameRate());
         filename = audio.getName().replace(".wav","");
+        inputStream = AudioSystem.getAudioInputStream(audio);
     }
+
 
     public int getLength() {
         return length;
@@ -29,8 +32,6 @@ public class AudioFile {
     public void crop(int start, int end) throws Exception {
         int duration = end - start;
         if(start >= 0 && end <= length && duration > 0) {
-            AudioInputStream inputStream = null;
-            AudioInputStream shortenedStream = null;
             try {
                 AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audio);
                 AudioFormat format = fileFormat.getFormat();
@@ -38,22 +39,13 @@ public class AudioFile {
                 int bytesPerSecond = format.getFrameSize() * (int) format.getFrameRate();
                 inputStream.skip(start * bytesPerSecond);
                 long framesOfAudioToCopy = duration * (int) format.getFrameRate();
-                shortenedStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy);
+                inputStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy);
+                inputStream.mark(inputStream.available());
                 File destinationFile = new File(filename + "_crop.wav");
-                AudioSystem.write(shortenedStream, fileFormat.getType(), destinationFile);
+                AudioSystem.write(inputStream, fileFormat.getType(), destinationFile);
+                inputStream.reset();
             } catch (Exception e) {
                 System.out.println(e);
-            } finally {
-                if (inputStream != null) try {
-                    inputStream.close();
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-                if (shortenedStream != null) try {
-                    shortenedStream.close();
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
             }
         }else{
             throw new Exception("incorrect input");
@@ -68,7 +60,7 @@ public class AudioFile {
             List<AudioInputStream> list = new ArrayList<AudioInputStream>();
 
             for (AudioFile file:audioFiles ) {
-                clip = AudioSystem.getAudioInputStream(file.audio);
+                clip = file.inputStream;
                 list.add(clip);
                 length += clip.getFrameLength();
                 name+=file.filename+"-";
@@ -83,6 +75,10 @@ public class AudioFile {
                 AudioSystem.write(appendedFiles,
                         AudioFileFormat.Type.WAVE,
                         new File(name));
+                appendedFiles.close();
+            }
+            for (AudioInputStream elem : list){
+                elem.close();
             }
         } catch (Exception e) {
             e.printStackTrace();

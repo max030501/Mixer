@@ -46,6 +46,13 @@ public class AudioFileTest {
         Assert.assertEquals(con.getLength(),488);
     }
 
-
-
+    @Test
+    public void cropAndConcatAudio() throws Exception {
+        test1.crop(0,5);
+        test2.crop(0,5);
+        test3.crop(0,5);
+        AudioFile.concat(test1,test2,test3);
+        AudioFile con = new AudioFile("test1-test2-test3.wav");
+        Assert.assertEquals(con.getLength(),15);
+    }
 }
