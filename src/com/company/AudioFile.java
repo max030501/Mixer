@@ -24,31 +24,35 @@ public class AudioFile {
 
     public void crop(int start, int end) throws Exception {
         int duration = end - start;
-        AudioInputStream inputStream = null;
-        AudioInputStream shortenedStream = null;
-        try {
-            AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audio);
-            AudioFormat format = fileFormat.getFormat();
-            inputStream = AudioSystem.getAudioInputStream(audio);
-            int bytesPerSecond = format.getFrameSize() * (int) format.getFrameRate();
-            inputStream.skip(start * bytesPerSecond);
-            long framesOfAudioToCopy = duration * (int) format.getFrameRate();
-            shortenedStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy);
-            File destinationFile = new File(filename+"_crop.wav");
-            AudioSystem.write(shortenedStream, fileFormat.getType(), destinationFile);
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-            if (inputStream != null) try {
-                inputStream.close();
+        if(start >= 0 && end <= length && duration > 0) {
+            AudioInputStream inputStream = null;
+            AudioInputStream shortenedStream = null;
+            try {
+                AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audio);
+                AudioFormat format = fileFormat.getFormat();
+                inputStream = AudioSystem.getAudioInputStream(audio);
+                int bytesPerSecond = format.getFrameSize() * (int) format.getFrameRate();
+                inputStream.skip(start * bytesPerSecond);
+                long framesOfAudioToCopy = duration * (int) format.getFrameRate();
+                shortenedStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy);
+                File destinationFile = new File(filename + "_crop.wav");
+                AudioSystem.write(shortenedStream, fileFormat.getType(), destinationFile);
             } catch (Exception e) {
                 System.out.println(e);
+            } finally {
+                if (inputStream != null) try {
+                    inputStream.close();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                if (shortenedStream != null) try {
+                    shortenedStream.close();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             }
-            if (shortenedStream != null) try {
-                shortenedStream.close();
-            } catch (Exception e) {
-                System.out.println(e);
-            }
+        }else{
+            throw new Exception("incorrect input");
         }
 
     }
