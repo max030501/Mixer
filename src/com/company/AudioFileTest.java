@@ -7,7 +7,6 @@ import org.junit.Test;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
 
 public class AudioFileTest {
     private AudioFile test1;
@@ -42,7 +41,7 @@ public class AudioFileTest {
     @Test
     public void concatAudio() throws UnsupportedAudioFileException, IOException {
         AudioFile.concat(test1,test2,test3);
-        AudioFile con = new AudioFile("test1-test2-test3.wav");
+        AudioFile con = new AudioFile("test1-test2-test3-mix.wav");
         Assert.assertEquals(con.getLength(),488);
     }
 
@@ -52,7 +51,7 @@ public class AudioFileTest {
         test2.crop(0,5);
         test3.crop(0,5);
         AudioFile.concat(test1,test2,test3);
-        AudioFile con = new AudioFile("test1-test2-test3.wav");
+        AudioFile con = new AudioFile("test1-test2-test3-mix.wav");
         Assert.assertEquals(con.getLength(),15);
     }
 }

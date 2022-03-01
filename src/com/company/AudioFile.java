@@ -24,7 +24,9 @@ public class AudioFile {
         inputStream = AudioSystem.getAudioInputStream(audio);
     }
 
-
+    public String getFilename(){
+        return filename;
+    }
     public int getLength() {
         return length;
     }
@@ -66,7 +68,7 @@ public class AudioFile {
                 name+=file.filename+"-";
             }
             if(length>0 && list.size()>0 && clip!=null) {
-                name = name.substring(0,name.length()-1)+".wav";
+                name += "mix.wav";
                 AudioInputStream appendedFiles =
                         new AudioInputStream(
                                 new SequenceInputStream(Collections.enumeration(list)),
