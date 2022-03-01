@@ -3,6 +3,10 @@ package com.company;
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.SequenceInputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class AudioFile {
     private int length;
@@ -55,5 +59,33 @@ public class AudioFile {
             throw new Exception("incorrect input");
         }
 
+    }
+    public static void concat(AudioFile ... audioFiles){
+        try {
+            long length = 0;
+            String name = "";
+            AudioInputStream clip = null;
+            List<AudioInputStream> list = new ArrayList<AudioInputStream>();
+
+            for (AudioFile file:audioFiles ) {
+                clip = AudioSystem.getAudioInputStream(file.audio);
+                list.add(clip);
+                length += clip.getFrameLength();
+                name+=file.filename+"-";
+            }
+            if(length>0 && list.size()>0 && clip!=null) {
+                name = name.substring(0,name.length()-1)+".wav";
+                AudioInputStream appendedFiles =
+                        new AudioInputStream(
+                                new SequenceInputStream(Collections.enumeration(list)),
+                                clip.getFormat(),
+                                length);
+                AudioSystem.write(appendedFiles,
+                        AudioFileFormat.Type.WAVE,
+                        new File(name));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

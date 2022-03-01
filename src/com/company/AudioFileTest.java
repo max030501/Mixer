@@ -33,4 +33,15 @@ public class AudioFileTest {
     public void cropAudio_incorrectInput() throws Exception {
         af.crop(10,10000);
     }
+
+    @Test
+    public void concatAudio() throws UnsupportedAudioFileException, IOException {
+        AudioFile naf = new AudioFile("test2.wav");
+        AudioFile naf1 = new AudioFile("test3.wav");
+        AudioFile.concat(af,naf,naf1);
+        AudioFile con = new AudioFile("test1-test2-test3.wav");
+        Assert.assertEquals(con.getLength(),488);
+    }
+
+
 }
